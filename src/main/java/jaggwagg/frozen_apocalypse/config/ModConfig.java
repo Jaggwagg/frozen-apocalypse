@@ -8,8 +8,8 @@ public class ModConfig {
     private final boolean isSunSizeChangesEnabled;
     private final boolean isConvertingMobsEnabled;
     private final boolean isPlacingCustomBlocksEnabled;
-    private final List<AffectedDimension> affectedDimensions;
-    private final List<FreezingImmuneEntity> freezingImmuneEntities;
+    private final List<MinecraftIdentifier> affectedDimensions;
+    private final List<MinecraftIdentifier> freezingImmuneEntities;
     private final List<ApocalypseLevel> apocalypseLevels;
 
     public ModConfig() {
@@ -27,25 +27,25 @@ public class ModConfig {
     }
 
     private void addDefaultAffectedDimensions() {
-        this.affectedDimensions.add(new AffectedDimension("minecraft:overworld"));
+        this.affectedDimensions.add(new MinecraftIdentifier("minecraft:overworld"));
     }
 
     private void addDefaultFreezingImmuneEntities() {
         this.freezingImmuneEntities.addAll(List.of(
-                new FreezingImmuneEntity("frozen_apocalypse:cryoboomer"),
-                new FreezingImmuneEntity("frozen_apocalypse:frostbite"),
-                new FreezingImmuneEntity("frozen_apocalypse:iceweaver"),
-                new FreezingImmuneEntity("frozen_apocalypse:shiverstare"),
-                new FreezingImmuneEntity("minecraft:creeper"),
-                new FreezingImmuneEntity("minecraft:ender_dragon"),
-                new FreezingImmuneEntity("minecraft:polar_bear"),
-                new FreezingImmuneEntity("minecraft:skeleton"),
-                new FreezingImmuneEntity("minecraft:spider"),
-                new FreezingImmuneEntity("minecraft:stray"),
-                new FreezingImmuneEntity("minecraft:warden"),
-                new FreezingImmuneEntity("minecraft:wither"),
-                new FreezingImmuneEntity("minecraft:wither_skeleton"),
-                new FreezingImmuneEntity("minecraft:zombie")
+                new MinecraftIdentifier("frozen_apocalypse:cryoboomer"),
+                new MinecraftIdentifier("frozen_apocalypse:frostbite"),
+                new MinecraftIdentifier("frozen_apocalypse:iceweaver"),
+                new MinecraftIdentifier("frozen_apocalypse:shiverstare"),
+                new MinecraftIdentifier("minecraft:creeper"),
+                new MinecraftIdentifier("minecraft:ender_dragon"),
+                new MinecraftIdentifier("minecraft:polar_bear"),
+                new MinecraftIdentifier("minecraft:skeleton"),
+                new MinecraftIdentifier("minecraft:spider"),
+                new MinecraftIdentifier("minecraft:stray"),
+                new MinecraftIdentifier("minecraft:warden"),
+                new MinecraftIdentifier("minecraft:wither"),
+                new MinecraftIdentifier("minecraft:wither_skeleton"),
+                new MinecraftIdentifier("minecraft:zombie")
         ));
     }
 
@@ -80,11 +80,11 @@ public class ModConfig {
         return this.isPlacingCustomBlocksEnabled;
     }
 
-    public List<AffectedDimension> getAffectedDimensions() {
+    public List<MinecraftIdentifier> getAffectedDimensions() {
         return this.affectedDimensions;
     }
 
-    public List<FreezingImmuneEntity> getFreezingImmuneEntities() {
+    public List<MinecraftIdentifier> getFreezingImmuneEntities() {
         return this.freezingImmuneEntities;
     }
 

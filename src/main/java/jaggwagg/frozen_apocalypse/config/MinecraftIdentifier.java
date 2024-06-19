@@ -1,9 +1,9 @@
 package jaggwagg.frozen_apocalypse.config;
 
-public class AffectedDimension {
+public class MinecraftIdentifier {
     private final String id;
 
-    public AffectedDimension(String id) {
+    public MinecraftIdentifier(String id) {
         this.id = id;
     }
 
