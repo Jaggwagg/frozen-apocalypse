@@ -40,7 +40,6 @@ public class LivingEntityEffects {
         int higherLightLevel = Math.max(lightLevel, lightLevelUp);
 
         return higherLightLevel > FrozenApocalypse.apocalypseLevel.getMinimumHeatSourceDistance();
-
     }
 
     public static boolean shouldSkipFreezingChecks(World world, LivingEntity livingEntity) {
