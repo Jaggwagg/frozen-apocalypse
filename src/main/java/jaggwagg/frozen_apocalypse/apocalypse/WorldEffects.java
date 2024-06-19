@@ -17,6 +17,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.LightType;
 
 import java.util.function.BiConsumer;
 
@@ -140,6 +141,10 @@ public final class WorldEffects {
             Block icicleBlock = ModBlocks.ICICLE.getBlock();
 
             if (serverWorld.getBlockState(blockPosBelow).isOf(icicleBlock)) {
+                break;
+            }
+
+            if (serverWorld.getLightLevel(LightType.BLOCK, blockPosBelow) > FrozenApocalypse.apocalypseLevel.getMinimumHeatSourceDistance()) {
                 break;
             }
 
