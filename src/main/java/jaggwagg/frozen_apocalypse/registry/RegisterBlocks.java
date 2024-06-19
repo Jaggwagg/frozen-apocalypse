@@ -18,9 +18,9 @@ public class RegisterBlocks {
         Arrays.stream(ModBlocks.values()).forEach(value -> registerBlockWithItem(value.getId(), value.getBlock()));
     }
 
-    public static void registerBlockWithItem(String name, Block block) {
-        Registry.register(Registries.BLOCK, new Identifier(FrozenApocalypse.MOD_ID, name), block);
-        BlockItem item = Registry.register(Registries.ITEM, new Identifier(FrozenApocalypse.MOD_ID, name), new BlockItem(block, new FabricItemSettings()));
+    public static void registerBlockWithItem(String id, Block block) {
+        Registry.register(Registries.BLOCK, new Identifier(FrozenApocalypse.MOD_ID, id), block);
+        BlockItem item = Registry.register(Registries.ITEM, new Identifier(FrozenApocalypse.MOD_ID, id), new BlockItem(block, new FabricItemSettings()));
         ItemGroupEvents.modifyEntriesEvent(ModItemGroups.FROZEN_APOCALYPSE.getItemGroup()).register(content -> content.add(item));
     }
 }
