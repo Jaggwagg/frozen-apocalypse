@@ -1,9 +1,9 @@
 package jaggwagg.frozen_apocalypse.apocalypse;
 
 import jaggwagg.frozen_apocalypse.FrozenApocalypse;
-import jaggwagg.frozen_apocalypse.config.FreezingImmuneEntity;
-import jaggwagg.frozen_apocalypse.item.ThermalArmorItem;
+import jaggwagg.frozen_apocalypse.config.MinecraftIdentifier;
 import jaggwagg.frozen_apocalypse.entity.effect.ModStatusEffects;
+import jaggwagg.frozen_apocalypse.item.ThermalArmorItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
@@ -35,7 +35,12 @@ public class LivingEntityEffects {
     }
 
     public static boolean isNearHeatSource(World world, LivingEntity livingEntity) {
-        return world.getLightLevel(LightType.BLOCK, livingEntity.getBlockPos()) > FrozenApocalypse.apocalypseLevel.getMinimumHeatSourceDistance();
+        int lightLevel = world.getLightLevel(LightType.BLOCK, livingEntity.getBlockPos());
+        int lightLevelUp = world.getLightLevel(LightType.BLOCK, livingEntity.getBlockPos().up());
+        int higherLightLevel = Math.max(lightLevel, lightLevelUp);
+
+        return higherLightLevel > FrozenApocalypse.apocalypseLevel.getMinimumHeatSourceDistance();
+
     }
 
     public static boolean shouldSkipFreezingChecks(World world, LivingEntity livingEntity) {
@@ -64,7 +69,7 @@ public class LivingEntityEffects {
     public static boolean isFreezingImmuneEntity(LivingEntity livingEntity) {
         String livingEntityId = String.valueOf(Registries.ENTITY_TYPE.getId(livingEntity.getType()));
 
-        for (FreezingImmuneEntity freezingImmuneEntity : FrozenApocalypse.CONFIG.getFreezingImmuneEntities()) {
+        for (MinecraftIdentifier freezingImmuneEntity : FrozenApocalypse.CONFIG.getFreezingImmuneEntities()) {
             if (livingEntityId.equals(freezingImmuneEntity.getId())) {
                 return true;
             }
