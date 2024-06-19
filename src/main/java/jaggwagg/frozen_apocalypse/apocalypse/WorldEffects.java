@@ -228,6 +228,10 @@ public final class WorldEffects {
             return;
         }
 
+        if (blockStateDown.getBlock() instanceof FluidBlock) {
+            return;
+        }
+
         placeBlock(serverWorld, blockPos, Blocks.SNOW_BLOCK.getDefaultState());
     }
 
