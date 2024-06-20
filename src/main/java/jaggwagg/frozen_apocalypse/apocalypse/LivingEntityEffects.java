@@ -4,6 +4,7 @@ import jaggwagg.frozen_apocalypse.FrozenApocalypse;
 import jaggwagg.frozen_apocalypse.config.MinecraftIdentifier;
 import jaggwagg.frozen_apocalypse.entity.effect.ModStatusEffects;
 import jaggwagg.frozen_apocalypse.item.ThermalArmorItem;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
@@ -70,6 +71,18 @@ public class LivingEntityEffects {
 
         for (MinecraftIdentifier freezingImmuneEntity : FrozenApocalypse.CONFIG.getFreezingImmuneEntities()) {
             if (livingEntityId.equals(freezingImmuneEntity.getId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isAllowedSpawningEntity(EntityType<? extends LivingEntity> type) {
+        String entityId = String.valueOf(Registries.ENTITY_TYPE.getId(type));
+
+        for (MinecraftIdentifier freezingImmuneEntity : FrozenApocalypse.CONFIG.getAllowedSpawningEntities()) {
+            if (entityId.equals(freezingImmuneEntity.getId())) {
                 return true;
             }
         }
