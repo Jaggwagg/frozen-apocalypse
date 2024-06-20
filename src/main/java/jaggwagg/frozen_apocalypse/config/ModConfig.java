@@ -10,6 +10,7 @@ public class ModConfig {
     private final boolean isPlacingCustomBlocksEnabled;
     private final List<MinecraftIdentifier> affectedDimensions;
     private final List<MinecraftIdentifier> freezingImmuneEntities;
+    private final List<MinecraftIdentifier> allowedSpawningEntities;
     private final List<ApocalypseLevel> apocalypseLevels;
 
     public ModConfig() {
@@ -19,10 +20,12 @@ public class ModConfig {
         this.isPlacingCustomBlocksEnabled = true;
         this.affectedDimensions = new ArrayList<>();
         this.freezingImmuneEntities = new ArrayList<>();
+        this.allowedSpawningEntities = new ArrayList<>();
         this.apocalypseLevels = new ArrayList<>();
 
         addDefaultAffectedDimensions();
         addDefaultFreezingImmuneEntities();
+        addDefaultAllowedSpawningEntities();
         addDefaultApocalypseLevels();
     }
 
@@ -45,6 +48,16 @@ public class ModConfig {
                 new MinecraftIdentifier("minecraft:warden"),
                 new MinecraftIdentifier("minecraft:wither"),
                 new MinecraftIdentifier("minecraft:wither_skeleton"),
+                new MinecraftIdentifier("minecraft:zombie")
+        ));
+    }
+
+    private void addDefaultAllowedSpawningEntities() {
+        this.allowedSpawningEntities.addAll(List.of(
+                new MinecraftIdentifier("minecraft:creeper"),
+                new MinecraftIdentifier("minecraft:enderman"),
+                new MinecraftIdentifier("minecraft:skeleton"),
+                new MinecraftIdentifier("minecraft:spider"),
                 new MinecraftIdentifier("minecraft:zombie")
         ));
     }
@@ -86,6 +99,10 @@ public class ModConfig {
 
     public List<MinecraftIdentifier> getFreezingImmuneEntities() {
         return this.freezingImmuneEntities;
+    }
+
+    public List<MinecraftIdentifier> getAllowedSpawningEntities() {
+        return this.allowedSpawningEntities;
     }
 
     public List<ApocalypseLevel> getApocalypseLevels() {

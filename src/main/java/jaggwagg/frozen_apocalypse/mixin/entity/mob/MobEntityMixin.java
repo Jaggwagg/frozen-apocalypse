@@ -5,6 +5,7 @@ import jaggwagg.frozen_apocalypse.apocalypse.SpawnEffects;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.WorldAccess;
@@ -21,11 +22,9 @@ import java.util.Set;
 public abstract class MobEntityMixin {
     @Inject(method = "canMobSpawn", at = @At("RETURN"), cancellable = true)
     private static void canMobSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random, CallbackInfoReturnable<Boolean> cir) {
-        Set<EntityType<? extends MobEntity>> allowedEntities = new HashSet<>(List.of(
-                EntityType.CREEPER, EntityType.ENDERMAN, EntityType.SKELETON, EntityType.SPIDER, EntityType.ZOMBIE
-        ));
+        String mobEntityId = String.valueOf(Registries.ENTITY_TYPE.getId(type));
 
-        if (allowedEntities.contains(type)) {
+        if (!FrozenApocalypse.CONFIG.getAllowedSpawningEntities().contains(mobEntityId)) {
             return;
         }
 
