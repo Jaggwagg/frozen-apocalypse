@@ -61,7 +61,7 @@ See the contributing guidelines [here](docs/CONTRIBUTING.md).
 See the changelogs [here](docs/CHANGELOG.md).
 
 ## Credits
-See the credits [here]().
+See the credits [here](docs/CREDITS.md).
 
 ## License
 * [GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/) - Project (codebase)
