@@ -60,6 +60,9 @@ See the contributing guidelines [here](docs/CONTRIBUTING.md).
 ## Changelog
 See the changelogs [here](docs/CHANGELOG.md).
 
+## Credits
+See the credits [here]().
+
 ## License
 * [GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/) - Project (codebase)
 * [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en) - Assets (textures/models)

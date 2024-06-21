@@ -7,6 +7,9 @@
   "authors": [
     "Jaggwagg"
   ],
+  "contributors": [
+    "FrozenDragon0"
+  ],
   "contact": {
     "homepage": "https://github.com/Jaggwagg/frozen-apocalypse",
     "sources": "https://github.com/Jaggwagg/frozen-apocalypse.git",
@@ -35,8 +38,5 @@
     "minecraft": "~1.20.1",
     "java": ">=17",
     "fabric-api": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
