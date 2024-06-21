@@ -2,9 +2,9 @@ package jaggwagg.frozen_apocalypse.apocalypse;
 
 import jaggwagg.frozen_apocalypse.FrozenApocalypse;
 import jaggwagg.frozen_apocalypse.block.IcicleBlock;
+import jaggwagg.frozen_apocalypse.block.ModBlocks;
 import jaggwagg.frozen_apocalypse.config.ApocalypseLevel;
 import jaggwagg.frozen_apocalypse.network.ModNetwork;
-import jaggwagg.frozen_apocalypse.block.ModBlocks;
 import jaggwagg.frozen_apocalypse.world.ModBooleanGameRules;
 import jaggwagg.frozen_apocalypse.world.ModIntegerGameRules;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -16,7 +16,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 
 import java.util.function.BiConsumer;
@@ -31,51 +30,54 @@ public final class WorldEffects {
     }
 
     public static void initializeFrozenApocalypseLevel(ServerWorld serverWorld) {
-        for (ApocalypseLevel apocalypseLevel : FrozenApocalypse.CONFIG.getApocalypseLevels()) {
-            if (apocalypseLevel.getApocalypseLevel() == Math.max(0, serverWorld.getGameRules().getInt(ModIntegerGameRules.FROZEN_APOCALYPSE_LEVEL.getKey()))) {
-                FrozenApocalypse.apocalypseLevel = apocalypseLevel;
-            }
-        }
+        int configLevel = Math.max(0, serverWorld.getGameRules().getInt(ModIntegerGameRules.FROZEN_APOCALYPSE_LEVEL.getKey()));
+
+        FrozenApocalypse.CONFIG.getApocalypseLevels().stream()
+                .filter(level -> level.getApocalypseLevel() == configLevel)
+                .findFirst()
+                .ifPresent(level -> FrozenApocalypse.apocalypseLevel = level);
     }
 
     public static void updateFrozenApocalypseLevel(ServerWorld serverWorld) {
-        GameRules.BooleanRule apocalypseLevelUpdatesEachDayGameRule = serverWorld.getGameRules().get(ModBooleanGameRules.FROZEN_APOCALYPSE_LEVEL_UPDATES_EACH_DAY.getKey());
-        GameRules.IntRule apocalypseLevelGameRule = serverWorld.getGameRules().get(ModIntegerGameRules.FROZEN_APOCALYPSE_LEVEL.getKey());
-        int maxStartingDay = 0;
-
-        if (!apocalypseLevelUpdatesEachDayGameRule.get()) {
+        if (!serverWorld.getGameRules().get(ModBooleanGameRules.FROZEN_APOCALYPSE_LEVEL_UPDATES_EACH_DAY.getKey()).get()) {
             return;
         }
 
-        for (ApocalypseLevel apocalypseLevel : FrozenApocalypse.CONFIG.getApocalypseLevels()) {
-            if (apocalypseLevel.getStartingDay() <= calculateDay(serverWorld) && apocalypseLevel.getStartingDay() >= maxStartingDay) {
-                apocalypseLevelGameRule.set(apocalypseLevel.getApocalypseLevel(), serverWorld.getServer());
-                maxStartingDay = apocalypseLevel.getStartingDay();
-            }
-        }
+        int currentDay = calculateDay(serverWorld);
+
+        serverWorld.getGameRules().get(ModIntegerGameRules.FROZEN_APOCALYPSE_LEVEL.getKey()).set(
+                FrozenApocalypse.CONFIG.getApocalypseLevels().stream()
+                        .filter(level -> level.getStartingDay() <= currentDay)
+                        .mapToInt(ApocalypseLevel::getApocalypseLevel)
+                        .max()
+                        .orElse(0),
+                serverWorld.getServer()
+        );
     }
 
     public static void sendFrozenApocalypseLevelToPlayers(ServerWorld serverWorld) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeVarInt(FrozenApocalypse.apocalypseLevel.getApocalypseLevel());
 
-        serverWorld.getPlayers().forEach(player -> {
-            if (ServerPlayNetworking.canSend(player, ModNetwork.FROZEN_APOCALYPSE_LEVEL_ID)) {
-                ServerPlayNetworking.send(player, ModNetwork.FROZEN_APOCALYPSE_LEVEL_ID, buf);
-            }
-        });
+        serverWorld.getPlayers().stream()
+                .filter(player -> ServerPlayNetworking.canSend(player, ModNetwork.FROZEN_APOCALYPSE_LEVEL_ID))
+                .forEach(player -> ServerPlayNetworking.send(player, ModNetwork.FROZEN_APOCALYPSE_LEVEL_ID, buf));
     }
 
     public static int calculateUpdateSpeed(ServerWorld serverWorld) {
-        return (int) Math.ceil((Math.ceil(3.0 / serverWorld.getGameRules().getInt(ModIntegerGameRules.FROZEN_APOCALYPSE_WORLD_UPDATE_SPEED.getKey()) * 512) / FrozenApocalypse.apocalypseLevel.getWorldUpdateSpeed()));
+        int speed = serverWorld.getGameRules().getInt(ModIntegerGameRules.FROZEN_APOCALYPSE_WORLD_UPDATE_SPEED.getKey());
+
+        return (int) Math.ceil((Math.ceil(3.0 / speed * 512) / FrozenApocalypse.apocalypseLevel.getWorldUpdateSpeed()));
     }
 
     public static void applyApocalypseEffects(ServerWorld serverWorld, BlockPos blockPos) {
-        applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canGrassTurnToFrostedGrass(), (currentServerWorld, currentBlockPos) -> placeGrassBlock(currentServerWorld, currentBlockPos, Blocks.GRASS_BLOCK, ModBlocks.FROSTED_GRASS_BLOCK.getBlock()));
+        applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canGrassTurnToFrostedGrass(),
+                (currentServerWorld, currentBlockPos) -> placeGrassBlock(currentServerWorld, currentBlockPos, Blocks.GRASS_BLOCK, ModBlocks.FROSTED_GRASS_BLOCK.getBlock()));
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canWaterTurnToIce(), WorldEffects::placeIce);
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canPlaceIcicles(), WorldEffects::placeIcicle);
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canPlaceSnow(), WorldEffects::placeSnow);
-        applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canFrostedGrassTurnToDeadGrass(), (currentServerWorld, currentBlockPos) -> placeGrassBlock(currentServerWorld, currentBlockPos, ModBlocks.FROSTED_GRASS_BLOCK.getBlock(), ModBlocks.DEAD_GRASS_BLOCK.getBlock()));
+        applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canFrostedGrassTurnToDeadGrass(),
+                (currentServerWorld, currentBlockPos) -> placeGrassBlock(currentServerWorld, currentBlockPos, ModBlocks.FROSTED_GRASS_BLOCK.getBlock(), ModBlocks.DEAD_GRASS_BLOCK.getBlock()));
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canLeavesTurnToDeadLeaves(), WorldEffects::placeDeadLeaves);
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canIceTurnToPackedIce(), WorldEffects::placePackedIce);
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canLavaTurnToObsidian(), WorldEffects::placeObsidian);
@@ -98,16 +100,13 @@ public final class WorldEffects {
         BlockPos blockPosBelow = blockPos.down();
         BlockState blockState = serverWorld.getBlockState(blockPosBelow);
 
-        if (serverWorld.getBlockState(blockPosBelow).isOf(grassBlock)) {
+        if (blockState.isOf(grassBlock)) {
             if (serverWorld.getBlockState(blockPos).getBlock() instanceof PlantBlock) {
                 placeBlock(serverWorld, blockPos, Blocks.AIR.getDefaultState());
             }
 
-            if (FrozenApocalypse.CONFIG.isPlacingCustomBlocksEnabled()) {
-                placeBlock(serverWorld, blockPosBelow, newGrassBlock.getStateWithProperties(blockState));
-            } else {
-                placeBlock(serverWorld, blockPosBelow, Blocks.PODZOL.getDefaultState());
-            }
+            Block blockToPlace = FrozenApocalypse.CONFIG.isPlacingCustomBlocksEnabled() ? newGrassBlock : Blocks.PODZOL;
+            placeBlock(serverWorld, blockPosBelow, blockToPlace.getStateWithProperties(blockState));
         }
     }
 
@@ -177,21 +176,18 @@ public final class WorldEffects {
     }
 
     private static void placeDeadLeaves(ServerWorld serverWorld, BlockPos blockPos) {
-        if (serverWorld.getBlockState(blockPos.down()).getBlock() instanceof LeavesBlock) {
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    for (int y = -3; y < 1; y++) {
-                        BlockPos currentBlockPos = new BlockPos(blockPos.getX() + x, blockPos.getY() + y, blockPos.getZ() + z);
+        Block blockBelow = serverWorld.getBlockState(blockPos.down()).getBlock();
 
-                        if (serverWorld.getBlockState(currentBlockPos).getBlock() instanceof LeavesBlock) {
-                            if (!serverWorld.getBlockState(currentBlockPos).isOf(ModBlocks.DEAD_LEAVES.getBlock())) {
-                                BlockState blockState = serverWorld.getBlockState(currentBlockPos);
-                                serverWorld.setBlockState(currentBlockPos, ModBlocks.DEAD_LEAVES.getBlock().getStateWithProperties(blockState));
-                            }
-                        }
+        if (blockBelow instanceof LeavesBlock || blockBelow instanceof VineBlock) {
+            applyEffectToArea(serverWorld, blockPos, 1, 3, 1, (world, pos) -> {
+                if (world.getBlockState(pos).getBlock() instanceof LeavesBlock) {
+                    if (!world.getBlockState(pos).isOf(ModBlocks.DEAD_LEAVES.getBlock())) {
+                        BlockState blockState = world.getBlockState(pos);
+
+                        world.setBlockState(pos, ModBlocks.DEAD_LEAVES.getBlock().getStateWithProperties(blockState));
                     }
                 }
-            }
+            });
         }
     }
 
@@ -204,11 +200,10 @@ public final class WorldEffects {
     }
 
     private static void placeObsidian(ServerWorld serverWorld, BlockPos blockPos) {
-        BlockPos blockPosBelow = blockPos.down();
         BlockState blockStateBelow = serverWorld.getBlockState(blockPos.down());
 
         if (blockStateBelow.getFluidState().isOf(Fluids.LAVA)) {
-            placeBlock(serverWorld, blockPosBelow, Blocks.OBSIDIAN.getDefaultState());
+            placeBlock(serverWorld, blockPos.down(), Blocks.OBSIDIAN.getDefaultState());
             serverWorld.syncWorldEvent(1501, blockPos.down(), 0);
         }
     }
@@ -241,29 +236,34 @@ public final class WorldEffects {
     }
 
     private static void placePermafrost(ServerWorld serverWorld, BlockPos blockPos) {
-        BlockPos blockPosBelow = blockPos.down();
-        BlockState blockState = serverWorld.getBlockState(blockPosBelow);
+        BlockState blockState = serverWorld.getBlockState(blockPos.down());
 
         if (blockState.getBlock() instanceof GrassBlock || blockState.isOf(Blocks.DIRT) || blockState.isOf(Blocks.PODZOL)) {
             if (FrozenApocalypse.CONFIG.isPlacingCustomBlocksEnabled()) {
-                placeBlock(serverWorld, blockPosBelow, ModBlocks.PERMAFROST.getBlock().getDefaultState());
+                placeBlock(serverWorld, blockPos.down(), ModBlocks.PERMAFROST.getBlock().getDefaultState());
             } else {
-                placeBlock(serverWorld, blockPosBelow, Blocks.PODZOL.getDefaultState());
+                placeBlock(serverWorld, blockPos.down(), Blocks.PODZOL.getDefaultState());
             }
         }
     }
 
     private static void doLeafDecay(ServerWorld serverWorld, BlockPos blockPos) {
-        if (serverWorld.getBlockState(blockPos.down()).getBlock() instanceof LeavesBlock || serverWorld.getBlockState(blockPos.down()).getBlock() instanceof VineBlock) {
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    for (int y = -3; y < 1; y++) {
-                        BlockPos currentBlockPos = new BlockPos(blockPos.getX() + x, blockPos.down().getY() + y, blockPos.getZ() + z);
+        Block blockBelow = serverWorld.getBlockState(blockPos.down()).getBlock();
+        if (blockBelow instanceof LeavesBlock || blockBelow instanceof VineBlock) {
+            applyEffectToArea(serverWorld, blockPos, 1, 3, 1, (world, pos) -> {
+                if (world.getBlockState(pos).getBlock() instanceof LeavesBlock) {
+                    world.removeBlock(pos, true);
+                }
+            });
+        }
+    }
 
-                        if (serverWorld.getBlockState(currentBlockPos).getBlock() instanceof LeavesBlock) {
-                            serverWorld.removeBlock(currentBlockPos, true);
-                        }
-                    }
+    private static void applyEffectToArea(ServerWorld serverWorld, BlockPos centerPos, int xRange, int yRange, int zRange, BiConsumer<ServerWorld, BlockPos> effect) {
+        for (int x = -xRange; x <= xRange; x++) {
+            for (int z = -zRange; z <= zRange; z++) {
+                for (int y = -yRange; y <= 1; y++) {
+                    BlockPos targetPos = centerPos.add(x, y, z);
+                    effect.accept(serverWorld, targetPos);
                 }
             }
         }
