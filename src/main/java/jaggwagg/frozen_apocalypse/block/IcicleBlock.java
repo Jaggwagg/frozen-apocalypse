@@ -2,15 +2,20 @@ package jaggwagg.frozen_apocalypse.block;
 
 import jaggwagg.frozen_apocalypse.FrozenApocalypse;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.Thickness;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.*;
@@ -167,6 +172,16 @@ public class IcicleBlock extends Block implements LandingBlock, Waterloggable {
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(VERTICAL_DIRECTION, THICKNESS, GROWTH, WATERLOGGED);
+    }
+
+    @Override
+    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+        super.afterBreak(world, player, pos, state, blockEntity, tool);
+        if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, tool) == 0) {
+            if (world.getDimension().ultrawarm()) {
+                world.removeBlock(pos, false);
+            }
+        }
     }
 
     @Override
