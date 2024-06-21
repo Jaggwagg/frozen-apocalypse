@@ -84,6 +84,7 @@ public final class WorldEffects {
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canPlaceSnowBlock(), WorldEffects::placeSnowBlock);
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canGrassTurnToPermafrost(), WorldEffects::placePermafrost);
         applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canLeavesDecay(), WorldEffects::doLeafDecay);
+        applyEffectIfEnabled(serverWorld, blockPos, FrozenApocalypse.apocalypseLevel.canPackedIceTurnToBlueIce(), WorldEffects::placeBlueIce);
     }
 
     private static void applyEffectIfEnabled(ServerWorld serverWorld, BlockPos blockPos, boolean shouldApply, BiConsumer<ServerWorld, BlockPos> effect) {
@@ -255,6 +256,14 @@ public final class WorldEffects {
                     world.removeBlock(pos, true);
                 }
             });
+        }
+    }
+
+    private static void placeBlueIce(ServerWorld serverWorld, BlockPos blockPos) {
+        BlockState blockStateBelow = serverWorld.getBlockState(blockPos.down());
+
+        if (blockStateBelow.getFluidState().isOf(Fluids.WATER) || blockStateBelow.isOf(Blocks.ICE) || blockStateBelow.isOf(Blocks.PACKED_ICE) || (blockStateBelow.getProperties().contains(Properties.WATERLOGGED) && blockStateBelow.get(Properties.WATERLOGGED))) {
+            placeBlock(serverWorld, blockPos.down(), Blocks.BLUE_ICE.getDefaultState());
         }
     }
 

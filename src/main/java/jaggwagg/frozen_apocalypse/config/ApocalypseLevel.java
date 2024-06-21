@@ -24,6 +24,7 @@ public class ApocalypseLevel {
     private final boolean lavaToObsidian;
     private final boolean placeSnowBlock;
     private final boolean grassToPermafrost;
+    private final boolean packedIceToBlueIce;
 
     private ApocalypseLevel(Builder builder) {
         this.apocalypseLevel = builder.apocalypseLevel;
@@ -49,6 +50,7 @@ public class ApocalypseLevel {
         this.lavaToObsidian = builder.lavaToObsidian;
         this.placeSnowBlock = builder.placeSnowBlock;
         this.grassToPermafrost = builder.grassToPermafrost;
+        this.packedIceToBlueIce = builder.packedIceToBlueIce;
     }
 
     public Integer getApocalypseLevel() {
@@ -143,6 +145,10 @@ public class ApocalypseLevel {
         return this.leavesDecay;
     }
 
+    public boolean canPackedIceTurnToBlueIce() {
+        return this.packedIceToBlueIce;
+    }
+
     public static class Builder {
         private final Integer apocalypseLevel;
         private final int startingDay;
@@ -167,6 +173,7 @@ public class ApocalypseLevel {
         private boolean lavaToObsidian;
         private boolean placeSnowBlock;
         private boolean grassToPermafrost;
+        private boolean packedIceToBlueIce;
 
         public Builder(Integer apocalypseLevel, int startingDay, int worldUpdateSpeed, float sunSize) {
             this.apocalypseLevel = apocalypseLevel;
@@ -255,6 +262,11 @@ public class ApocalypseLevel {
 
         public Builder grassToPermafrost() {
             this.grassToPermafrost = true;
+            return this;
+        }
+
+        public Builder packedIceToBlueIce() {
+            this.packedIceToBlueIce = true;
             return this;
         }
     }
