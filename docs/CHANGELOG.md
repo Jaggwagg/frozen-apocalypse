@@ -1,5 +1,21 @@
 # Frozen Apocalypse Mod - Changelog
 
+### <ins>v1.2.3 - Unreleased</ins>
+
+##### Added
+- Config option for blue ice (#31)
+- Config option for determining what mobs are allowed to spawn during apocalypse (#19)
+
+##### Fixed
+- Icicles not having a proper tool (#30)
+- Entities riding entities freezing due to position being inside a block (#24)
+- Blocks being placed above flowing fluids (#21)
+
+##### Changed
+- Icicles no longer form near light sources (#27)
+- Icicles require a silk touch pickaxe to collect (unless they fall)
+- Icicles behave more like ice
+
 ### <ins>v1.2.2 - Released 2024-1-27</ins>
 
 ##### Added
