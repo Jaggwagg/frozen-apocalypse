@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "frozen_apocalypse:iron_thermal_chestplate"
-  }
+  },
+  "show_notification": true
 }

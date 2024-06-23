@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "frozen_apocalypse:golden_thermal_helmet"
-  }
+  },
+  "show_notification": true
 }

@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "frozen_apocalypse:golden_thermal_horse_armor"
-  }
+  },
+  "show_notification": true
 }

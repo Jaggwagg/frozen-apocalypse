@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "frozen_apocalypse:diamond_thermal_boots"
-  }
+  },
+  "show_notification": true
 }

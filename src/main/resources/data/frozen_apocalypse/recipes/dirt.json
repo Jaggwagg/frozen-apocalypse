@@ -6,5 +6,6 @@
   "ingredient": {
     "item": "frozen_apocalypse:permafrost"
   },
-  "result": "minecraft:dirt"
+  "result": "minecraft:dirt",
+  "show_notification": true
 }
