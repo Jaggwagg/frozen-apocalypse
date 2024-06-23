@@ -1,6 +1,6 @@
 # Frozen Apocalypse Mod - Changelog
 
-### <ins>v1.2.3 - Unreleased</ins>
+### <ins>v1.2.3 - Released 2024-6-23</ins>
 
 ##### Added
 - Config option for blue ice (#31)

@@ -12,7 +12,7 @@ Frozen Apocalypse is an open source Minecraft mod designed to add a challenge to
 Frozen Apocalypse is compatible with Sinytra Connector (Minecraft 1.20.1). For instructions, click [here](https://github.com/Sinytra/Connector).
 
 ## Premise
-Have you ever wanted to freeze your Minecraft world, turning it into a frozen wasteland. Is Minecraft too easy for you or do you just want a reason to make an awesome underground base? If so, this mod is for you!
+Have you ever wanted to freeze your Minecraft world, turning it into a frozen wasteland? Is Minecraft too easy for you or do you just want a reason to make an awesome underground base? If so, this mod is for you!
 
 Each day, your world will quickly turn into a frozen, apocalyptic wasteland as the sun moves further away!
 
