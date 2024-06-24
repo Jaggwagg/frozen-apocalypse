@@ -19,8 +19,7 @@ public abstract class WorldRendererMixin {
     private Matrix4f sunMatrixCopy;
 
     @ModifyVariable(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V",
-            at = @At(
-                    value = "INVOKE",
+            at = @At(value = "INVOKE",
                     target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/util/Identifier;)V",
                     ordinal = 0),
             ordinal = 1)
@@ -44,7 +43,7 @@ public abstract class WorldRendererMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/util/Identifier;)V",
-                    ordinal = 0),
+                    ordinal = 1),
             ordinal = 1)
     private Matrix4f fixMoonAndStars(Matrix4f in) {
         Matrix4f copy = new Matrix4f(sunMatrixCopy);
